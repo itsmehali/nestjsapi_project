@@ -1,0 +1,27 @@
+### Creating a post
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "new titlee1331",
+    "description" : "this is just a asddescriptiopn of the post2",
+    "image": "image"
+}
+
+### Listing all posts
+GET http://localhost:3000/posts
+
+### Listing one posts
+GET http://localhost:3000/posts/5
+
+### Updating one posts
+PATCH  http://localhost:3000/posts/5
+Content-Type: application/json
+
+{
+    "title": "updated title!",
+    "description": "updated desc"
+}
+
+### Deleting one posts
+DELETE http://localhost:3000/posts/4
