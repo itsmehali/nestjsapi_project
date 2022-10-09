@@ -5,12 +5,14 @@ import {
   Req,
   Post,
   Body,
+  Res,
   UsePipes,
   ValidationPipe,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { GoogleAuthGuard } from 'src/guards/googleauth.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -37,7 +39,10 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() body: CreateUserDto) {
+  async login(
+    @Body() body: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { email, password } = body;
 
     const user = await this.authService.findUser(email);
@@ -48,7 +53,34 @@ export class AuthController {
 
     const jwt = await this.jwtService.signAsync({ id: user.email });
 
-    return jwt;
+    res.cookie;
+
+    res.cookie('jwt', jwt, { httpOnly: true });
+
+    return {
+      message: 'success',
+    };
+  }
+
+  @Get('user')
+  async user(@Req() req: Request, @Body() body: CreateUserDto) {
+    try {
+      const cookie = req.cookies['jwt'];
+
+      const data = await this.jwtService.verifyAsync(cookie);
+
+      if (!data) {
+        throw new UnauthorizedException();
+      }
+
+      const { email } = body;
+
+      const user = await this.authService.findUser(email);
+
+      return user;
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 
   @Get('google/login')
@@ -64,13 +96,13 @@ export class AuthController {
     return { msg: 'ok' };
   }
 
-  @Get('status')
-  user(@Req() request: Request) {
-    console.log(request.user);
-    if (request.user) {
-      return { msg: 'Authenticated' };
-    } else {
-      return { msg: 'Not Authenticated' };
-    }
-  }
+  // @Get('status')
+  // user(@Req() request: Request) {
+  //   console.log(request.user);
+  //   if (request.user) {
+  //     return { msg: 'Authenticated' };
+  //   } else {
+  //     return { msg: 'Not Authenticated' };
+  //   }
+  // }
 }
