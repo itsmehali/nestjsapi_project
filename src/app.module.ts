@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, Post } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UserEntity } from './auth/UserEntity';
+import { User } from './users/user.entity';
 import { PostModule } from './post/post.module';
-import { PassportModule } from '@nestjs/passport';
+import { PostEntity } from './post/post.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -18,14 +18,12 @@ import { PassportModule } from '@nestjs/passport';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [UserEntity],
+      entities: [User, PostEntity],
       autoLoadEntities: true,
       synchronize: true,
     }),
+    UsersModule,
     PostModule,
-    AuthModule,
-    //enabling sessions with passport
-    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
