@@ -3,8 +3,8 @@ POST http://localhost:3000/api/auth/signup
 Content-Type: application/json
 
 {
-    "email": "dfgdfgdfg@gmail.com",
-    "password": "test123sssssss"
+    "email": "bali@gmail.com",
+    "password": "asdsdfasdff"
 }
 
 ### login 
@@ -12,15 +12,15 @@ POST http://localhost:3000/api/auth/signin
 Content-Type: application/json
 
 {
-    "email": "dfgdfgdfg@gmail.com",
-    "password": "test123sssssss"
+    "email": "bali@gmail.com",
+    "password": "asdsdfasdff"
 }
 
 ### Get current signed in user
-GET http://localhost:3000/auth/whoami
+GET http://localhost:3000/api/auth/currentuser
 
 ### lloginout
-POST http://localhost:3000/api/auth/signout
+POST http://localhost:3000/api/auth/logout
 
 ### find user w ID
 GET http://localhost:3000/auth/1

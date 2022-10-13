@@ -7,20 +7,31 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '../guards/auth.guard';
 import { DeleteResult } from 'typeorm';
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { PostEntity } from './post.entity';
 import { PostsService } from './post.service';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { PostDto } from './dto/post.dto';
+import { CurrentUser } from 'src/users/decorators/currentUser.decorator';
+import { User } from 'src/users/user.entity';
 
 @Controller('posts')
 export class PostController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  async createPost(@Body() body: CreatePostDto): Promise<PostEntity> {
-    return await this.postsService.createPost(body);
+  @UseGuards(AuthGuard)
+  @Serialize(PostDto)
+  async createPost(
+    @Body() body: CreatePostDto,
+    @CurrentUser() user: User,
+  ): Promise<PostEntity> {
+    return await this.postsService.createPost(body, user);
   }
 
   @Get()
