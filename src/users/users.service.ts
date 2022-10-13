@@ -6,13 +6,13 @@ import { User } from './user.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
   create(email: string, password: string) {
     const user = this.usersRepository.create({ email, password });
 
-    return user;
+    return this.usersRepository.save(user);
   }
 
   findOne(id: number) {
