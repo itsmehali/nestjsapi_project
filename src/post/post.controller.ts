@@ -61,9 +61,13 @@ export class PostController {
     return await this.postsService.updatePost(+id, body, user);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/:id')
-  async deletePost(@Param('id') id: string): Promise<DeleteResult> {
+  async deletePost(
+    @Param('id') id: string,
+    @CurrentUser() user: number,
+  ): Promise<DeleteResult> {
     // + converts from string to int
-    return await this.postsService.deleteOnePost(+id);
+    return await this.postsService.deleteOnePost(+id, user);
   }
 }

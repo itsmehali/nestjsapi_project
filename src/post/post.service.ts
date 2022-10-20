@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/createPost.dto';
-import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -53,14 +52,24 @@ export class PostsService {
     }
 
     if (post.userId !== user) {
-      throw new Error('You do not have access to do that!');
+      throw new UnauthorizedException('You do not have access to do that!');
     }
 
     Object.assign(post, attrs);
     return this.repo.save(post);
   }
 
-  deleteOnePost(id: number): Promise<DeleteResult> {
+  async deleteOnePost(id: number, user: number): Promise<DeleteResult> {
+    const post = await this.findOnePost(id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (post.userId !== user) {
+      throw new UnauthorizedException('You do not have access to do that!');
+    }
+
     return this.repo.delete(id);
   }
 }
