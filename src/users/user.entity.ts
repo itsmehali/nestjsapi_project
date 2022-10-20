@@ -1,8 +1,11 @@
+import { type } from 'os';
 import { PostEntity } from 'src/post/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -18,15 +21,10 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => PostEntity, (post) => post.user)
+  @OneToMany(() => PostEntity, (post) => post.user, { eager: true })
   posts: PostEntity[];
 
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
-
-  // @Column({ default: false })
-  // admin: boolean;
-
-  //@OneToMany(() => PostEntity, (post) => post.user)
-  // posts: PostEntity[];
 }

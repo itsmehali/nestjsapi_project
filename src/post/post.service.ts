@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { DeleteResult, Repository } from 'typeorm';
@@ -11,9 +15,17 @@ export class PostsService {
     @InjectRepository(PostEntity) private readonly repo: Repository<PostEntity>,
   ) {}
 
-  async createPost(postDto: CreatePostDto, user: User): Promise<PostEntity> {
+  async createPost(postDto: CreatePostDto, user: number): Promise<PostEntity> {
+    console.log(postDto, 'postdto');
+    console.log(user, 'service user');
+
+    postDto.userId = user;
+
     const post = this.repo.create(postDto);
-    post.user = user;
+
+    console.log(postDto);
+
+    //post.userId = user;
     return await this.repo.save(post);
   }
 
@@ -29,11 +41,19 @@ export class PostsService {
     return await this.repo.findOne({ where: { id } });
   }
 
-  async updatePost(id: number, attrs: Partial<PostEntity>) {
+  async updatePost(
+    id: number,
+    attrs: Partial<PostEntity>,
+    user: number,
+  ): Promise<PostEntity> {
     const post = await this.findOnePost(id);
 
     if (!post) {
       throw new NotFoundException('Post not found');
+    }
+
+    if (post.userId !== user) {
+      throw new Error('You do not have access to do that!');
     }
 
     Object.assign(post, attrs);

@@ -48,8 +48,4 @@ export class AuthService {
       throw new BadRequestException('Wrong Credentials!');
     }
   }
-
-  logout() {}
-
-  refreshTokens() {}
 }

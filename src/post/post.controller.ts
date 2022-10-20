@@ -8,6 +8,7 @@ import {
   Delete,
   Patch,
   UseGuards,
+  Session,
 } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
 import { DeleteResult } from 'typeorm';
@@ -24,13 +25,16 @@ import { User } from 'src/users/user.entity';
 export class PostController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
   @UseGuards(AuthGuard)
   @Serialize(PostDto)
+  @Post()
   async createPost(
     @Body() body: CreatePostDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: number,
   ): Promise<PostEntity> {
+    console.log(body, 'body');
+    console.log(user, 'user');
+
     return await this.postsService.createPost(body, user);
   }
 
@@ -46,9 +50,15 @@ export class PostController {
     return post;
   }
 
+  @UseGuards(AuthGuard)
+  @Serialize(UpdatePostDto)
   @Patch('/:id')
-  async updatePost(@Param('id') id: string, @Body() body: UpdatePostDto) {
-    return await this.postsService.updatePost(+id, body);
+  async updatePost(
+    @Param('id') id: string,
+    @Body() body: UpdatePostDto,
+    @CurrentUser() user: number,
+  ) {
+    return await this.postsService.updatePost(+id, body, user);
   }
 
   @Delete('/:id')

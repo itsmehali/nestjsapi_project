@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { User } from 'src/users/user.entity';
 export class UpdatePostDto {
   @IsString()
   @IsOptional()

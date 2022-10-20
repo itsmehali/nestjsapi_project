@@ -6,6 +6,7 @@ content-type: application/json
     "title": "new titlee1331",
     "description" : "this is just a asddescriptiopn of the post2",
     "image": "image"
+    //"userId": 2
 }
 
 ### Listing all posts
@@ -15,11 +16,11 @@ GET http://localhost:3000/api/posts
 GET http://localhost:3000/api/posts/5
 
 ### Updating one posts
-PATCH  http://localhost:3000/api/posts/5
+PATCH  http://localhost:3000/api/posts/16
 Content-Type: application/json
 
 {
-    "title": "updated title!",
+    "title": "can updated title!",
     "description": "updated desc"
 }
 
