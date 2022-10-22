@@ -1,7 +1,21 @@
 ### Creating comment
-POST http://localhost:3000/api/comments
+POST http://localhost:3000/api/comments/16
 content-type: application/json
 
 {
     "comment": "first comment"
+}
+
+### GET all comments
+GET http://localhost:3000/api/comments
+
+### GET one comment by ID
+GET http://localhost:3000/api/comments/3
+
+### UPDATE comment ID/postId
+GET http://localhost:3000/api/comments/3
+content-type: application/json
+
+{
+    "comment": "modified"
 }

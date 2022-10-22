@@ -12,19 +12,19 @@ import { CreatePostDto } from './dto/createPost.dto';
 export class PostsService {
   constructor(
     @InjectRepository(PostEntity)
-    private postRepository: Repository<PostEntity>,
+    private postsRepository: Repository<PostEntity>,
   ) {}
 
   async createPost(postDto: CreatePostDto, user: number): Promise<PostEntity> {
     postDto.userId = user;
 
-    const post = this.postRepository.create(postDto);
+    const post = this.postsRepository.create(postDto);
 
-    return await this.postRepository.save(post);
+    return await this.postsRepository.save(post);
   }
 
   async findAllPosts(title: string) {
-    return await this.postRepository.find({ where: { title } });
+    return await this.postsRepository.find({ where: { title } });
   }
 
   async findOnePost(id: number): Promise<PostEntity> {
@@ -32,7 +32,7 @@ export class PostsService {
       return null;
     }
 
-    return await this.postRepository.findOne({ where: { id } });
+    return await this.postsRepository.findOne({ where: { id } });
   }
 
   async updatePost(
@@ -51,7 +51,7 @@ export class PostsService {
     }
 
     Object.assign(post, attrs);
-    return this.postRepository.save(post);
+    return this.postsRepository.save(post);
   }
 
   async deleteOnePost(id: number, user: number): Promise<DeleteResult> {
@@ -65,6 +65,6 @@ export class PostsService {
       throw new UnauthorizedException('You do not have access to do that!');
     }
 
-    return this.postRepository.delete(id);
+    return this.postsRepository.delete(id);
   }
 }

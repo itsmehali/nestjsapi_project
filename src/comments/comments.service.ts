@@ -1,17 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsService } from 'src/post/post.service';
 import { Repository } from 'typeorm';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(CommentEntity)
-    private commentRepository: Repository<CommentEntity>,
-    private postService: PostsService,
+    private commentsRepository: Repository<CommentEntity>,
+    private postsService: PostsService,
   ) {}
 
   async create(
@@ -22,7 +25,7 @@ export class CommentsService {
     createCommentDto.userId = user;
 
     // find post
-    const post = this.postService.findOnePost(postId);
+    const post = this.postsService.findOnePost(postId);
 
     // check if post exists
     if (!post) {
@@ -31,21 +34,40 @@ export class CommentsService {
 
     createCommentDto.postId = postId;
 
-    const comment = this.commentRepository.create(createCommentDto);
+    const comment = this.commentsRepository.create(createCommentDto);
 
-    return await this.commentRepository.save(comment);
+    return await this.commentsRepository.save(comment);
   }
 
-  findAll() {
-    return `This action returns all comments`;
+  async findAll(comment: string) {
+    return await this.commentsRepository.find({ where: { comment } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findOne(id: number) {
+    if (!id) {
+      return null;
+    }
+
+    return await this.commentsRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(
+    id: number,
+    attrs: Partial<CommentEntity>,
+    user: number,
+  ): Promise<CommentEntity> {
+    const comment = await this.findOne(id);
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.userId !== user) {
+      throw new UnauthorizedException('You do not have access to do that!');
+    }
+
+    Object.assign(comment, attrs);
+    return this.commentsRepository.save(comment);
   }
 
   remove(id: number) {
