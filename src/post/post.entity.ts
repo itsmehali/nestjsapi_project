@@ -1,3 +1,4 @@
+import { CommentEntity } from 'src/comments/comment.entity';
 import { User } from 'src/users/user.entity';
 import {
   Entity,
@@ -5,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
-  JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('Posts')
@@ -22,11 +23,16 @@ export class PostEntity {
   @Column({ default: 'niceimage' })
   image: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
 
   @Column()
   userId: number;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.post, {
+    onDelete: 'CASCADE',
+  })
+  comments: CommentEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -32,9 +32,6 @@ export class PostController {
     @Body() body: CreatePostDto,
     @CurrentUser() user: number,
   ): Promise<PostEntity> {
-    console.log(body, 'body');
-    console.log(user, 'user');
-
     return await this.postsService.createPost(body, user);
   }
 

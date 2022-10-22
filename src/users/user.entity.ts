@@ -1,4 +1,5 @@
 import { type } from 'os';
+import { CommentEntity } from 'src/comments/comment.entity';
 import { PostEntity } from 'src/post/post.entity';
 import {
   Column,
@@ -21,8 +22,14 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => PostEntity, (post) => post.user, { eager: true })
+  @OneToMany(() => PostEntity, (post) => post.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   posts: PostEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment)
+  comments: CommentEntity[];
 
   @Column()
   @CreateDateColumn()

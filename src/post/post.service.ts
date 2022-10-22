@@ -11,25 +11,20 @@ import { CreatePostDto } from './dto/createPost.dto';
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectRepository(PostEntity) private readonly repo: Repository<PostEntity>,
+    @InjectRepository(PostEntity)
+    private postRepository: Repository<PostEntity>,
   ) {}
 
   async createPost(postDto: CreatePostDto, user: number): Promise<PostEntity> {
-    console.log(postDto, 'postdto');
-    console.log(user, 'service user');
-
     postDto.userId = user;
 
-    const post = this.repo.create(postDto);
+    const post = this.postRepository.create(postDto);
 
-    console.log(postDto);
-
-    //post.userId = user;
-    return await this.repo.save(post);
+    return await this.postRepository.save(post);
   }
 
   async findAllPosts(title: string) {
-    return await this.repo.find({ where: { title } });
+    return await this.postRepository.find({ where: { title } });
   }
 
   async findOnePost(id: number): Promise<PostEntity> {
@@ -37,7 +32,7 @@ export class PostsService {
       return null;
     }
 
-    return await this.repo.findOne({ where: { id } });
+    return await this.postRepository.findOne({ where: { id } });
   }
 
   async updatePost(
@@ -56,7 +51,7 @@ export class PostsService {
     }
 
     Object.assign(post, attrs);
-    return this.repo.save(post);
+    return this.postRepository.save(post);
   }
 
   async deleteOnePost(id: number, user: number): Promise<DeleteResult> {
@@ -70,6 +65,6 @@ export class PostsService {
       throw new UnauthorizedException('You do not have access to do that!');
     }
 
-    return this.repo.delete(id);
+    return this.postRepository.delete(id);
   }
 }
