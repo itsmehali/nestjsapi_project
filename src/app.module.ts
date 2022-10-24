@@ -8,6 +8,8 @@ import { PostModule } from './post/post.module';
 import { PostEntity } from './post/post.entity';
 import { UsersModule } from './users/users.module';
 import { CommentsModule } from './comments/comments.module';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './core/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -30,6 +32,12 @@ import { CommentsModule } from './comments/comments.module';
     CommentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}

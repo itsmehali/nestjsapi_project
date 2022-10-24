@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -35,8 +37,15 @@ export class AuthService {
     const [user] = await this.usersService.find(email);
 
     if (!user) {
-      throw new NotFoundException('Wrong credentials!');
+      //throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: 'Invalid Credentials!' },
+        HttpStatus.NOT_FOUND,
+      );
     }
+    // if (!user) {
+    //   throw new NotFoundException('Wrong credentials!');
+    // }
 
     const [salt, storedHash] = user.password.split('.');
 

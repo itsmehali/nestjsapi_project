@@ -3,11 +3,18 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'reflect-metadata';
+import * as fs from 'fs';
+import * as morgan from 'morgan';
 const cookieSession = require('cookie-session');
+
+const logStream = fs.createWriteStream('api.log', {
+  flags: 'a',
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.use(morgan('combined', { stream: logStream }));
 
   const options = new DocumentBuilder()
     .setTitle('Nestj API')
