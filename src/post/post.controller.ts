@@ -19,7 +19,7 @@ import { PostsService } from './post.service';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { PostDto } from './dto/post.dto';
 import { CurrentUser } from 'src/users/decorators/currentUser.decorator';
-import { User } from 'src/users/user.entity';
+import { ApiBasicAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('posts')
 export class PostController {
@@ -50,6 +50,9 @@ export class PostController {
   @UseGuards(AuthGuard)
   @Serialize(UpdatePostDto)
   @Patch('/:id')
+  @ApiBasicAuth()
+  @ApiOkResponse({ description: 'Post is updated' })
+  @ApiBody({ type: UpdatePostDto })
   async updatePost(
     @Param('id') id: string,
     @Body() body: UpdatePostDto,
