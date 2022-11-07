@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  Patch,
   Post,
   Session,
   UseGuards,
@@ -21,6 +24,9 @@ import {
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Role } from './enums/role.enum';
+import { Roles } from './decorators/roles.decorator';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -69,5 +75,23 @@ export class UsersController {
   @ApiCreatedResponse({ description: 'User is logged out' })
   async logout(@Session() session: any) {
     session.userId = null;
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/:id')
+  @ApiOkResponse({ description: 'User updated' })
+  @ApiBody({ type: UpdateUserDto })
+  async updateUser(
+    @Param('id') id: string,
+    @Body() body: UpdateUserDto,
+    @CurrentUser() user: number,
+  ): Promise<UpdateUserDto> {
+    return await this.usersService.update(+id, body, user);
+  }
+
+  @Delete('/:id')
+  @Roles(Role.Admin)
+  async deleteUser() {
+    console.log('Only admin can hit this route!');
   }
 }

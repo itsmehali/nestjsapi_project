@@ -20,7 +20,7 @@ export class PostEntity {
   @Column()
   description: string;
 
-  @Column({ default: 'niceimage' })
+  @Column({ nullable: true })
   image: string;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })

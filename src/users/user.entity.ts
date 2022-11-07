@@ -28,8 +28,11 @@ export class User {
   })
   posts: PostEntity[];
 
-  @OneToMany(() => CommentEntity, (comment) => comment)
+  @OneToMany(() => CommentEntity, (comment) => comment, { onDelete: 'CASCADE' })
   comments: CommentEntity[];
+
+  @Column({ default: 'user' })
+  role: string;
 
   @Column()
   @CreateDateColumn()

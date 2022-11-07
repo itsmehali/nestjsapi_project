@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -27,11 +32,19 @@ export class UsersService {
     return this.usersRepository.find({ where: { email } });
   }
 
-  async update(id: number, attrs: Partial<User>) {
+  async update(
+    id: number,
+    attrs: Partial<User>,
+    loggedInUser: number,
+  ): Promise<UpdateUserDto> {
     const user = await this.findOne(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (user.id !== loggedInUser) {
+      throw new UnauthorizedException('You do not have access to do that!');
     }
 
     Object.assign(user, attrs);

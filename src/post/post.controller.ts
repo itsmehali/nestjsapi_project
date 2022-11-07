@@ -9,6 +9,8 @@ import {
   Patch,
   UseGuards,
   Session,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
 import { DeleteResult } from 'typeorm';
@@ -20,6 +22,7 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { PostDto } from './dto/post.dto';
 import { CurrentUser } from 'src/users/decorators/currentUser.decorator';
 import { ApiBasicAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('posts')
 export class PostController {
@@ -28,10 +31,20 @@ export class PostController {
   @UseGuards(AuthGuard)
   @Serialize(PostDto)
   @Post()
+  @UseInterceptors(FileInterceptor('image'))
   async createPost(
     @Body() body: CreatePostDto,
     @CurrentUser() user: number,
-  ): Promise<PostEntity> {
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<CreatePostDto> {
+    console.log(file);
+
+    if (file) body.image = file.filename;
+    // if (file) {
+    //   body.image = file.filename;
+    //   console.log(body);
+    // }
+
     return await this.postsService.createPost(body, user);
   }
 
@@ -50,6 +63,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   @Serialize(UpdatePostDto)
   @Patch('/:id')
+  @UseInterceptors(FileInterceptor('image'))
   @ApiBasicAuth()
   @ApiOkResponse({ description: 'Post is updated' })
   @ApiBody({ type: UpdatePostDto })
@@ -57,7 +71,10 @@ export class PostController {
     @Param('id') id: string,
     @Body() body: UpdatePostDto,
     @CurrentUser() user: number,
+    @UploadedFile() file: Express.Multer.File,
   ) {
+    if (file) body.image = file.filename;
+
     return await this.postsService.updatePost(+id, body, user);
   }
 

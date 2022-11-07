@@ -11,6 +11,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { AuthService } from './auth.service';
 import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from 'src/guards/roles.guard';
 // import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 //import { CurrentUserMiddleware } from './middleware/current-user.middleware';
 
@@ -20,6 +22,7 @@ import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
   providers: [
     UsersService,
     AuthService,
+    { provide: APP_GUARD, useClass: RolesGuard },
     // { provide: APP_INTERCEPTOR, useClass: CurrentUserInterceptor },
   ],
 })

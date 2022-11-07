@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 export class UserDto {
   @Expose()
@@ -9,4 +9,8 @@ export class UserDto {
   @Expose()
   @ApiProperty({ type: String, description: 'email' })
   email: string;
+
+  @Exclude()
+  @ApiProperty({ type: Boolean, description: 'user' })
+  roles: string;
 }

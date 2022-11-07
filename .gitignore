@@ -1,5 +1,7 @@
 .env
 
+/uploads
+
 .gitignore
 .eslintrc
 .prettierrc
