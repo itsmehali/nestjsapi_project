@@ -22,8 +22,8 @@ import { RolesGuard } from 'src/guards/roles.guard';
   providers: [
     UsersService,
     AuthService,
-    { provide: APP_GUARD, useClass: RolesGuard },
-    // { provide: APP_INTERCEPTOR, useClass: CurrentUserInterceptor },
+    RolesGuard,
+    // { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class UsersModule {}

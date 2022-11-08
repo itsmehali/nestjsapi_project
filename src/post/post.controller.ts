@@ -8,7 +8,6 @@ import {
   Delete,
   Patch,
   UseGuards,
-  Session,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
@@ -37,13 +36,7 @@ export class PostController {
     @CurrentUser() user: number,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<CreatePostDto> {
-    console.log(file);
-
     if (file) body.image = file.filename;
-    // if (file) {
-    //   body.image = file.filename;
-    //   console.log(body);
-    // }
 
     return await this.postsService.createPost(body, user);
   }

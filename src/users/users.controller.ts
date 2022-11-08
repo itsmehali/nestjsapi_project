@@ -27,6 +27,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from './enums/role.enum';
 import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -70,6 +71,7 @@ export class UsersController {
     return user;
   }
 
+  @UseGuards(AuthGuard)
   @Post('/logout')
   @ApiCookieAuth()
   @ApiCreatedResponse({ description: 'User is logged out' })
@@ -89,9 +91,11 @@ export class UsersController {
     return await this.usersService.update(+id, body, user);
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete('/:id')
-  @Roles(Role.Admin)
-  async deleteUser() {
+  async deleteUser(@Param('id') id: string) {
     console.log('Only admin can hit this route!');
+    return await this.usersService.remove(+id);
   }
 }

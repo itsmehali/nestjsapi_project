@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Role } from './enums/role.enum';
 
 @Entity('User')
 export class User {
@@ -31,8 +32,8 @@ export class User {
   @OneToMany(() => CommentEntity, (comment) => comment, { onDelete: 'CASCADE' })
   comments: CommentEntity[];
 
-  @Column({ default: 'user' })
-  role: string;
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
 
   @Column()
   @CreateDateColumn()

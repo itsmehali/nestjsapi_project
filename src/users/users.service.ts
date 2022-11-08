@@ -7,6 +7,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.entity';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class UsersService {
@@ -37,6 +41,8 @@ export class UsersService {
     attrs: Partial<User>,
     loggedInUser: number,
   ): Promise<UpdateUserDto> {
+    const { password } = attrs;
+
     const user = await this.findOne(id);
 
     if (!user) {
@@ -46,6 +52,14 @@ export class UsersService {
     if (user.id !== loggedInUser) {
       throw new UnauthorizedException('You do not have access to do that!');
     }
+
+    const salt = randomBytes(8).toString('hex');
+
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+
+    const result = salt + '.' + hash.toString('hex');
+
+    attrs.password = result;
 
     Object.assign(user, attrs);
     return this.usersRepository.save(user);
